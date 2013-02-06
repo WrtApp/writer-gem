@@ -1,0 +1,35 @@
+begin
+	require 'writeapp'
+	require 'trollop'
+	require 'highline/import'
+	require 'net/http'
+	require 'uri'
+rescue
+	require 'rubygems'
+	require 'writeapp'
+	require 'trollop'
+	require 'highline/import'
+	require 'net/http'
+	require 'uri'
+end
+
+puts "Hold up, son. I be working."
+
+opts = Trollop::options do
+	opt :write, "Send a note to Write.app"
+	opt :public, "Make note public"
+	opt :notebook, "Specify a notebook to use during operation", :type => :string
+	opt :upload, "Feed in a file to be read and sent to Write.app"
+	opt :file, "    File location", :type => :string
+	opt :setup, "Save your Write.app account credentials or create a new account"
+	opt :read, "Returns a list of notes from the notebook you specify"
+end
+
+account = Writeapp::Settings.new
+
+unless account.exists
+	puts "Looks like you haven't set up your Write.app account for usage with this Gem yet."
+	puts "That's alright, we can log you in from here or even create a new account if you need one."
+	puts ""
+	choice = ask("Do you have a Write.app account? (y/n)")
+end
