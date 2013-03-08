@@ -22,14 +22,33 @@ opts = Trollop::options do
 	opt :upload, "Feed in a file to be read and sent to Write.app"
 	opt :file, "    File location", :type => :string
 	opt :setup, "Save your Write.app account credentials or create a new account"
+	opt :signup, "Sign up for a Write.app account from the command line"
 	opt :read, "Returns a list of notes from the notebook you specify"
 end
 
-account = Writeapp::Settings.new
+api_access 	= "CTc5dmu9mtOaqG2TEYpWgIL6FnfrXQHizny1Wo6LyQs=" # This API key is NOT a secret
+account 	= Writeapp::Settings.new
 
-unless account.exists
+unless account.account_exists
 	puts "Looks like you haven't set up your Write.app account for usage with this Gem yet."
 	puts "That's alright, we can log you in from here or even create a new account if you need one."
 	puts ""
 	choice = ask("Do you have a Write.app account? (y/n)")
+	if choice == "y"
+		puts "Please run `writeapp --setup` to connect your account"
+	else
+		puts "Please run `writeapp --signup` to create a new Write.app account"
+	end
+	exit 0
+end
+
+# Parse options
+case
+when opts[:setup]
+	puts "Connect your Write.app account:"
+	puts ""
+	username = ask("Enter your Write.app username: ")
+	password = ask("Enter your Write.app password: ")
+	save = Writeapp::Settings.new
+	save.connect_account(username, password)
 end
